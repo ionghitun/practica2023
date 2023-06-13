@@ -1,0 +1,2 @@
+SHELL=/bin/bash
+* * * * * cd /var/www/backend && /usr/local/bin/php /var/www/backend/artisan schedule:run >> /var/www/backend/storage/logs/services/cron.log 2>&1
