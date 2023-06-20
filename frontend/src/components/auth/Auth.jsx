@@ -6,7 +6,7 @@ export default function Auth({ children }) {
 	});
 
 	if (isLoading) {
-		return <div>loading...</div>;
+		return <div></div>;
 	}
 
 	return children;

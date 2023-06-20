@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { Button, PasswordInput, TextInput } from '@mantine/core';
+import { Button, Container, Image, LoadingOverlay, PasswordInput, Stack, TextInput } from '@mantine/core';
 import { useAuth } from '../../hooks/user';
 import { useLoginMutation } from '../../state/auth/api';
 
@@ -30,13 +30,17 @@ function Login() {
 	}
 
 	return (
-		<div>
-			<TextInput placeholder='Email' label='Email' withAsterisk onChange={(e) => setEmail(e.target.value)} />
-			<PasswordInput placeholder='Password' label='Password' withAsterisk onChange={(e) => setPassword(e.target.value)} />
-			<Button fullWidth mt='md' onClick={onSubmit}>
-				Login
-			</Button>
-		</div>
+		<Container size='400px'>
+			<LoadingOverlay visible={resultLogin.isLoading} />
+			<Stack>
+				<Image src='/roweb-logo.svg' height={50} mt='250px' fit='contain' />
+				<TextInput placeholder='Email' label='Email' withAsterisk onChange={(e) => setEmail(e.target.value)} />
+				<PasswordInput placeholder='Password' label='Password' withAsterisk onChange={(e) => setPassword(e.target.value)} />
+				<Button fullWidth onClick={onSubmit}>
+					Login
+				</Button>
+			</Stack>
+		</Container>
 	);
 }
 
