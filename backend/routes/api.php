@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,5 +32,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'getUser']);
     Route::post('/user', [UserController::class, 'updateUser']);
     Route::post('/logout', [UserController::class, 'logout']);
+
+    Route::group(['prefix' => 'category'], function () {
+       Route::get('/list', [CategoryController::class, 'list']);
+       Route::post('/add', [CategoryController::class, 'addCategory']);
+    });
 });
 
