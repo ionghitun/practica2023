@@ -4,6 +4,15 @@ import { Button, Container, Image, LoadingOverlay, PasswordInput, Stack, TextInp
 import { useAuth } from '../../hooks/user';
 import { useLoginMutation } from '../../state/auth/api';
 
+export const InputRoweb = (props) => {
+	return (
+		<div>
+			<p>Email</p>
+			<input placeholder={props.placeholder} />
+		</div>
+	);
+};
+
 function Login() {
 	const navigate = useNavigate();
 	const { user } = useAuth();

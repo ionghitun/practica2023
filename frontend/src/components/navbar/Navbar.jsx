@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { createStyles, getStylesRef, rem, Navbar as MantineNav } from '@mantine/core';
-import { IconHome } from '@tabler/icons-react';
+import { IconCategory, IconHome } from '@tabler/icons-react';
 
 const useStyles = createStyles((theme) => ({
 	header: {
@@ -53,7 +53,14 @@ const useStyles = createStyles((theme) => ({
 	},
 }));
 
-const data = [{ link: '/dashboard', label: 'Home', icon: IconHome }];
+const data = [
+	{ link: '/dashboard', label: 'Home', icon: IconHome },
+	{
+		link: '/categories',
+		label: 'Categories',
+		icon: IconCategory,
+	},
+];
 
 function Navbar({ opened = false, setOpened = null }) {
 	const { classes, cx } = useStyles();
