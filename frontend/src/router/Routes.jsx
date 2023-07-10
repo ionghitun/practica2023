@@ -8,6 +8,8 @@ import Users from '../pages/users';
 import User from '../pages/users/user';
 import Dashboard from '../pages/dashboard';
 import Categories from '../pages/categories';
+import CategoriesCreate from '../pages/categories/CategoriesCreate'
+import CategoriesEdit from '../pages/categories/CategoriesEdit'
 
 export default function AppRoutes() {
 	return (
@@ -19,6 +21,8 @@ export default function AppRoutes() {
 					{/*Authenticated Routes */}
 					<Route path='dashboard' element={<Dashboard />} />
 					<Route path='categories' element={<Categories />} />
+					<Route path='categories/create' element={<CategoriesCreate />} />
+					<Route path='categories/:id/edit' element={<CategoriesEdit />} />
 					<Route path='users'>
 						<Route index element={<Users />} />
 						<Route path=':id'>

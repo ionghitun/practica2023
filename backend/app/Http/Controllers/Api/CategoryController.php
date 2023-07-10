@@ -18,6 +18,7 @@ class CategoryController extends Controller
     /**
      * @return JsonResponse
      */
+
     public function list(): JsonResponse
     {
         try {
@@ -54,6 +55,73 @@ class CategoryController extends Controller
             Log::error($exception);
 
             return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+     /**
+     * @return JsonResponse
+     */
+    public function show($id): JsonResponse
+    {
+        $category = Category::find($id);
+        if($category){
+            return $this->sendSuccess(null, Response::HTTP_OK);
+        }else{
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+     /**
+     * @return JsonResponse
+     */
+    public function edit($id): JsonResponse
+    {
+        $category = Category::find($id);
+        if($category){
+            return $this->sendSuccess(null, Response::HTTP_OK);
+        }else{
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+     /**
+     * @return JsonResponse
+     */
+    public function update(Request $request, $id): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'min:3']
+        ]);
+        
+        if($validator->fails()){
+            return $this->sendError($validator->messages()->toArray());
+        }else{
+
+            $category = Category::find($id);
+
+            if($category){
+             
+                $category->name = $request->get('name');
+                $category->save();    
+
+                return $this->sendSuccess(null, Response::HTTP_OK);
+            }else{
+                return $this->sendError([], Response::HTTP_NOT_FOUND);
+            }
+        }
+    }
+    
+     /**
+     * @return JsonResponse
+     */
+    public function destroy($id): JsonResponse
+    {
+        $category = Category::find($id);
+        if($category)
+        {
+            $category->delete();
+            
+            return $this->sendSuccess(null, Response::HTTP_OK);
+        }else{
+            return $this->sendError([], Response::HTTP_NOT_FOUND);
         }
     }
 }
