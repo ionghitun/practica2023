@@ -17,7 +17,22 @@ export const categoriesEndpoints = api.injectEndpoints({
 			}),
 			invalidatesTags: ['Categories'],
 		}),
+		editCategories: builder.mutation({
+			query: (data) => ({
+				url: `/category/edit/${data.id}`,
+				method:'PUT',
+				data,
+			}),
+			invalidatesTags: ['Categories']
+		}),
+		deleteCategories: builder.mutation({
+			query: (id) => ({
+				url: `/category/delete/${id}`,
+				method:'DELETE',
+			}),
+			invalidatesTags: ['Categories']
+		}),
 	}),
 });
 
-export const { useGetCategoriesQuery, useCreateCategoriesMutation } = categoriesEndpoints;
+export const { useGetCategoriesQuery, useCreateCategoriesMutation, useEditCategoriesMutation, useDeleteCategoriesMutation } = categoriesEndpoints;

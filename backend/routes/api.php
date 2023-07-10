@@ -27,15 +27,15 @@ Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
 Route::post('/resend-verify-email', [AuthController::class, 'resendVerifyEmail'])->middleware('apiThrottle:1,60');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('apiThrottle:1,60');
 Route::post('/change-password', [AuthController::class, 'changePassword']);
+Route::group(['prefix' => 'category'], function () {
+    Route::get('/list', [CategoryController::class, 'list']);
+    Route::post('/add', [CategoryController::class, 'addCategory']);
+    Route::put('/edit/{id}', [CategoryController::class, 'editCategory']);
+    Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory']);
+});
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'getUser']);
     Route::post('/user', [UserController::class, 'updateUser']);
     Route::post('/logout', [UserController::class, 'logout']);
-
-    Route::group(['prefix' => 'category'], function () {
-       Route::get('/list', [CategoryController::class, 'list']);
-       Route::post('/add', [CategoryController::class, 'addCategory']);
-    });
 });
-

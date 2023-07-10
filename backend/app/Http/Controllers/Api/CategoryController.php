@@ -56,4 +56,45 @@ class CategoryController extends Controller
             return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * @return JsonResponse
+     */
+    public function editCategory(Request $request, string $id): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'min:3']
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendError($validator->messages()->toArray());
+            }
+
+            $existingCategory = Category::find($id);
+
+            if (!$existingCategory) {
+                return $this->sendError([], Response::HTTP_NOT_FOUND);
+            }
+            $existingCategory->name=$request->get('name');
+
+            $existingCategory->save();
+
+            return $this->sendSuccess(null, Response::HTTP_OK);
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function deleteCategory(string $id): JsonResponse
+    {
+        $existingCategory = Category::find($id);
+        if (!$existingCategory) {
+            return $this->sendError([], Response::HTTP_NOT_FOUND);
+        }
+        $existingCategory->delete();
+        return $this->sendSuccess(null, Response::HTTP_OK);
+    }
 }
