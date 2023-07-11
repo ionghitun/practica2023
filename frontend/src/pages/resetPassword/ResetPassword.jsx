@@ -1,13 +1,17 @@
 import { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import { Button, Container, Image, LoadingOverlay, PasswordInput, Stack, Text } from '@mantine/core';
-import { useAuth } from '../../hooks/user';
-import { useResetPasswordMutation } from '../../state/auth/api';
 import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
+import { useAuth } from '../../hooks/user';
+import { useResetPasswordMutation } from '../../state/auth/api';
 
 function ResetPassword() {
 	const { user } = useAuth();
+
+	const [searchParams] = useSearchParams();
+	const token = searchParams.get('token');
+	const hash = searchParams.get('hash');
 
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,8 +22,8 @@ function ResetPassword() {
 
 		const res = await resetPassword({
 			password,
-			token: '',
-			hash: '',
+			token,
+			hash,
 		});
 
 		if (!res.error) {
@@ -60,7 +64,7 @@ function ResetPassword() {
 						Reset
 					</Button>
 					<Text>
-						No account? Click <Link to='/register'>here</Link> to create an account
+						Already have an account? Click <Link to='/login'>here</Link> to login
 					</Text>
 				</Stack>
 			</form>
