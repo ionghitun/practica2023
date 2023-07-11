@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { Button, Container, Image, LoadingOverlay, PasswordInput, Stack, Text, TextInput } from '@mantine/core';
+import { Button, Container, Image, LoadingOverlay, Stack, Text, TextInput } from '@mantine/core';
 import { useAuth } from '../../hooks/user';
 import { useLoginMutation } from '../../state/auth/api';
 
-function Login() {
+function ForgotPassword() {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 
 	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
 	const [login, resultLogin] = useLoginMutation();
 
 	const onSubmit = async (e) => {
@@ -17,7 +16,6 @@ function Login() {
 
 		const res = await login({
 			email,
-			password,
 		}).unwrap();
 
 		if (res.errorMessage) {
@@ -39,9 +37,8 @@ function Login() {
 			<form onSubmit={onSubmit}>
 				<Stack>
 					<TextInput placeholder='Email' label='Email' withAsterisk onChange={(e) => setEmail(e.target.value)} />
-					<PasswordInput placeholder='Password' label='Password' withAsterisk onChange={(e) => setPassword(e.target.value)} />
 					<Button fullWidth type='submit'>
-						Login
+						Reset
 					</Button>
 					<Text>
 						No account? Click <Link to='/register'>here</Link> to create an account
@@ -52,4 +49,4 @@ function Login() {
 	);
 }
 
-export default Login;
+export default ForgotPassword;

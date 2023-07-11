@@ -4,12 +4,14 @@ import { Button, Container, Image, LoadingOverlay, PasswordInput, Stack, Text, T
 import { useAuth } from '../../hooks/user';
 import { useLoginMutation } from '../../state/auth/api';
 
-function Login() {
+function Register() {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 
+	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [confirmPassword, setConfirmPassword] = useState('');
 	const [login, resultLogin] = useLoginMutation();
 
 	const onSubmit = async (e) => {
@@ -24,7 +26,6 @@ function Login() {
 			// error
 			return null;
 		}
-
 		return navigate('/dashboard');
 	};
 
@@ -38,13 +39,27 @@ function Login() {
 			<Image src='/roweb-logo.svg' height={50} mt='250px' mb='md' fit='contain' />
 			<form onSubmit={onSubmit}>
 				<Stack>
-					<TextInput placeholder='Email' label='Email' withAsterisk onChange={(e) => setEmail(e.target.value)} />
-					<PasswordInput placeholder='Password' label='Password' withAsterisk onChange={(e) => setPassword(e.target.value)} />
+					<TextInput placeholder='Name' label='Name' withAsterisk value={name} onChange={(e) => setName(e.target.value)} />
+					<TextInput placeholder='Email' label='Email' withAsterisk value={email} onChange={(e) => setEmail(e.target.value)} />
+					<PasswordInput
+						placeholder='Password'
+						label='Password'
+						withAsterisk
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+					/>
+					<PasswordInput
+						placeholder='Confirm Password'
+						label='Confirm Password'
+						withAsterisk
+						value={confirmPassword}
+						onChange={(e) => setConfirmPassword(e.target.value)}
+					/>
 					<Button fullWidth type='submit'>
-						Login
+						Register
 					</Button>
 					<Text>
-						No account? Click <Link to='/register'>here</Link> to create an account
+						Already have an account? Click <Link to='/login'>here</Link> to login
 					</Text>
 				</Stack>
 			</form>
@@ -52,4 +67,4 @@ function Login() {
 	);
 }
 
-export default Login;
+export default Register;

@@ -8,12 +8,20 @@ import Users from '../pages/users';
 import User from '../pages/users/user';
 import Dashboard from '../pages/dashboard';
 import Categories from '../pages/categories';
+import Register from '../pages/register';
+import ForgotPassword from '../pages/forgotPassword';
+import ResetPassword from '../pages/resetPassword';
+import VerifyEmail from '../pages/verifyEmail';
 
 export default function AppRoutes() {
 	return (
 		<Routes>
 			<Route index element={<Home />} />
 			<Route path='/login' element={<Login />} />
+			<Route path='/register' element={<Register />} />
+			<Route path='/forgot-password' element={<ForgotPassword />} />
+			<Route path='/reset-password' element={<ResetPassword />} />
+			<Route path='/verify-email' element={<VerifyEmail />} />
 			<Route element={<PrivateRoute />}>
 				<Route path='/' element={<Layout />}>
 					{/*Authenticated Routes */}
