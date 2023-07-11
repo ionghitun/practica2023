@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Button, Group, Modal, TextInput, LoadingOverlay } from '@mantine/core';
-import { useCreateCategoriesMutation } from '../../state/categories/api';
+import { useCreateCategoriesMutation, useUpdateCategoryMutation } from '../../state/categories/api';
 
 export default function ModalAddEditCategory({ opened = false, onClose = null, category = null }) {
 	const [categoryName, setCategoryName] = useState('');
 
 	const [addCategory, resultAddCategory] = useCreateCategoriesMutation();
+	const [updateCategory, resultUpdateCategory] = useUpdateCategoryMutation();
 
 	useEffect(() => {
 		if (category?.name) {
@@ -21,7 +22,7 @@ export default function ModalAddEditCategory({ opened = false, onClose = null, c
 	const onSubmit = async (e) => {
 		e.preventDefault();
 
-		const result = await addCategory({ name: categoryName });
+		const result = category ? await updateCategory({ name: categoryName, id: category.id }) : await addCategory({ name: categoryName });
 
 		if (!result.error) {
 			handleClose();
@@ -30,7 +31,7 @@ export default function ModalAddEditCategory({ opened = false, onClose = null, c
 
 	return (
 		<Modal opened={opened} onClose={handleClose} title={category ? 'Edit Category' : 'Add Category'}>
-			<LoadingOverlay visible={resultAddCategory.isLoading} />
+			<LoadingOverlay visible={resultAddCategory.isLoading || resultUpdateCategory.isLoading} />
 			<form onSubmit={onSubmit}>
 				<TextInput
 					label='Category'

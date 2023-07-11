@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Button, Container, Image, LoadingOverlay, PasswordInput, Stack, Text, TextInput } from '@mantine/core';
 import { useAuth } from '../../hooks/user';
-import { useLoginMutation } from '../../state/auth/api';
+import { useRegisterMutation } from '../../state/auth/api';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconExclamationCircle } from '@tabler/icons-react';
 
 function Register() {
 	const navigate = useNavigate();
@@ -12,21 +14,37 @@ function Register() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
-	const [login, resultLogin] = useLoginMutation();
+	const [register, resultRegister] = useRegisterMutation();
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
 
-		const res = await login({
+		if (password !== confirmPassword) {
+			return notifications.show({
+				title: 'Error',
+				message: "Passwords don't match",
+				color: 'green',
+				icon: <IconExclamationCircle />,
+			});
+		}
+
+		const res = await register({
+			name,
 			email,
 			password,
-		}).unwrap();
+		});
 
-		if (res.errorMessage) {
+		if (!res.error) {
 			// error
-			return null;
+			notifications.show({
+				title: 'Success',
+				message: 'An email was sent to your address',
+				color: 'red',
+				icon: <IconCheck />,
+			});
+
+			navigate('/dashboard');
 		}
-		return navigate('/dashboard');
 	};
 
 	if (user) {
@@ -35,7 +53,7 @@ function Register() {
 
 	return (
 		<Container size='400px'>
-			<LoadingOverlay visible={resultLogin.isLoading} />
+			<LoadingOverlay visible={resultRegister.isLoading} />
 			<Image src='/roweb-logo.svg' height={50} mt='250px' mb='md' fit='contain' />
 			<form onSubmit={onSubmit}>
 				<Stack>

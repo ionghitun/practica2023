@@ -1,30 +1,35 @@
 import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { Button, Container, Image, LoadingOverlay, PasswordInput, Stack, Text } from '@mantine/core';
 import { useAuth } from '../../hooks/user';
-import { useLoginMutation } from '../../state/auth/api';
+import { useResetPasswordMutation } from '../../state/auth/api';
+import { notifications } from '@mantine/notifications';
+import { IconCheck } from '@tabler/icons-react';
 
 function ResetPassword() {
-	const navigate = useNavigate();
 	const { user } = useAuth();
 
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
-	const [login, resultLogin] = useLoginMutation();
+	const [resetPassword, resultResetPassword] = useResetPasswordMutation();
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
 
-		const res = await login({
+		const res = await resetPassword({
 			password,
-		}).unwrap();
+			token: '',
+			hash: '',
+		});
 
-		if (res.errorMessage) {
-			// error
-			return null;
+		if (!res.error) {
+			notifications.show({
+				title: 'Success',
+				message: 'Password changed',
+				color: 'green',
+				icon: <IconCheck />,
+			});
 		}
-
-		return navigate('/dashboard');
 	};
 
 	if (user) {
@@ -33,7 +38,7 @@ function ResetPassword() {
 
 	return (
 		<Container size='400px'>
-			<LoadingOverlay visible={resultLogin.isLoading} />
+			<LoadingOverlay visible={resultResetPassword.isLoading} />
 			<Image src='/roweb-logo.svg' height={50} mt='250px' mb='md' fit='contain' />
 			<form onSubmit={onSubmit}>
 				<Stack>

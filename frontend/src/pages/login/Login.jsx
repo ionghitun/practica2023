@@ -46,6 +46,9 @@ function Login() {
 					<Text>
 						No account? Click <Link to='/register'>here</Link> to create an account
 					</Text>
+					<Text>
+						Forgot your password? Click <Link to='/forgot-password'>here</Link> to reset
+					</Text>
 				</Stack>
 			</form>
 		</Container>

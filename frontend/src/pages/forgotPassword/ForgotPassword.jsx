@@ -1,29 +1,33 @@
 import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { Button, Container, Image, LoadingOverlay, Stack, Text, TextInput } from '@mantine/core';
 import { useAuth } from '../../hooks/user';
-import { useLoginMutation } from '../../state/auth/api';
+import { useForgotPasswordMutation } from '../../state/auth/api';
+import { notifications } from '@mantine/notifications';
+import { IconCheck } from '@tabler/icons-react';
 
 function ForgotPassword() {
-	const navigate = useNavigate();
 	const { user } = useAuth();
 
 	const [email, setEmail] = useState('');
-	const [login, resultLogin] = useLoginMutation();
+	const [forgotPassword, resultForgotPassword] = useForgotPasswordMutation();
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
 
-		const res = await login({
+		const res = await forgotPassword({
 			email,
-		}).unwrap();
+		});
 
-		if (res.errorMessage) {
+		if (!res.error) {
 			// error
-			return null;
+			notifications.show({
+				title: 'Success',
+				message: 'An email was sent to your address',
+				color: 'green',
+				icon: <IconCheck />,
+			});
 		}
-
-		return navigate('/dashboard');
 	};
 
 	if (user) {
@@ -32,7 +36,7 @@ function ForgotPassword() {
 
 	return (
 		<Container size='400px'>
-			<LoadingOverlay visible={resultLogin.isLoading} />
+			<LoadingOverlay visible={resultForgotPassword.isLoading} />
 			<Image src='/roweb-logo.svg' height={50} mt='250px' mb='md' fit='contain' />
 			<form onSubmit={onSubmit}>
 				<Stack>

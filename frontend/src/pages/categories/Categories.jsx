@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ActionIcon, Button, Group, Paper, Table, Text, Title, LoadingOverlay } from '@mantine/core';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
-import { useGetCategoriesQuery } from '../../state/categories/api';
+import { IconEdit, IconPlus, IconTrash } from '@tabler/icons-react';
+import { useDeleteCategoryMutation, useGetCategoriesQuery } from '../../state/categories/api';
 import { useDisclosure } from '@mantine/hooks';
 import ModalAddEditCategory from './ModalAddEditCategory';
 
@@ -11,6 +11,8 @@ export default function Categories() {
 	const { data: categories, isFetching: isFetchingCategories } = useGetCategoriesQuery();
 
 	const [modalCategoryOpened, { open: modalCategoryOpen, close: modalCategoryClose }] = useDisclosure();
+
+	const [deleteCategory, resultDeleteCategory] = useDeleteCategoryMutation();
 
 	const handleCloseModalCategory = () => {
 		modalCategoryClose();
@@ -22,17 +24,20 @@ export default function Categories() {
 		modalCategoryOpen();
 	};
 
-	const handleDelete = (categoryId) => () => {
+	const handleDelete = (categoryId) => async () => {
 		// delete category
+		await deleteCategory(categoryId);
 	};
 
 	return (
 		<div>
-			<LoadingOverlay visible={isFetchingCategories} />
+			<LoadingOverlay visible={isFetchingCategories || resultDeleteCategory.isLoading} />
 			<ModalAddEditCategory opened={modalCategoryOpened} onClose={handleCloseModalCategory} category={activeCategory} />
 			<Group mb='md' position='apart'>
 				<Title>Categories</Title>
-				<Button onClick={modalCategoryOpen}>Add Category</Button>
+				<Button onClick={modalCategoryOpen} leftIcon={<IconPlus />}>
+					Add Category
+				</Button>
 			</Group>
 			<Paper>
 				<Table highlightOnHover withBorder>
