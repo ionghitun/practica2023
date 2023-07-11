@@ -32,6 +32,7 @@ class CategoryController extends Controller
     }
 
     /**
+     * @param Request $request
      * @return JsonResponse
      */
     public function addCategory(Request $request): JsonResponse
@@ -50,6 +51,62 @@ class CategoryController extends Controller
             $category->save();
 
             return $this->sendSuccess(null, Response::HTTP_CREATED);
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
+    public function editCategory(Request $request, $id): JsonResponse
+    {
+        try {
+            $category = Category::find($id);
+
+            if (!$category) {
+                return $this->sendError(['Category not found'], Response::HTTP_NOT_FOUND);
+            }
+
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'min:3']
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendError($validator->messages()->toArray());
+            }
+
+            $category->name = $request->get('name');
+            $category->save();
+
+            return $this->sendSuccess($category->toArray());
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function deleteCategory($id): JsonResponse
+    {
+        try {
+            $category = Category::find($id);
+
+            if (!$category) {
+                return $this->sendError(['Category not found'], Response::HTTP_NOT_FOUND);
+            }
+
+            $category->delete();
+
+            return $this->sendSuccess(null, Response::HTTP_NO_CONTENT);
         } catch (Throwable $exception) {
             Log::error($exception);
 

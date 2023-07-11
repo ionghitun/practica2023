@@ -24,8 +24,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/login-with-token', [AuthController::class, 'loginWithToken']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
-Route::post('/resend-verify-email', [AuthController::class, 'resendVerifyEmail'])->middleware('apiThrottle:1,60');
-Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('apiThrottle:1,60');
+Route::post('/resend-verify-email', [AuthController::class, 'resendVerifyEmail'])->middleware('apiThrottle:3,60');
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('apiThrottle:3,60');
 Route::post('/change-password', [AuthController::class, 'changePassword']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -36,6 +36,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::group(['prefix' => 'category'], function () {
        Route::get('/list', [CategoryController::class, 'list']);
        Route::post('/add', [CategoryController::class, 'addCategory']);
+       Route::put('/edit/{id}', [CategoryController::class, 'editCategory']);
+       Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory']);
     });
 });
 
