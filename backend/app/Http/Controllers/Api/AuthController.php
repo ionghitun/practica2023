@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Enums\UserTokenTypeEnum;
+use App\Enums\UserTypeEnum;
 use App\Models\User;
 use App\Models\UserToken;
 use App\Notifications\ForgotPassword;
@@ -108,7 +109,34 @@ class AuthController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
-        //TODO
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'min:3'],
+                'email' => ['required', 'email', 'unique:users,email'],
+                'password' => ['required', 'min:6'],
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendError($validator->messages()->toArray());
+            }
+
+            $user = new User();
+            $user->name = $request->get('name');
+            $user->email = $request->get('email');
+            $user->password = Hash::make($request->get('password'));
+            $user->type = UserTypeEnum::Customer->value;
+            $user->save();
+
+            $userRequestToken = UserToken::where('user_id', $user->id)->where('type', UserTokenTypeEnum::VerifyEmail)->first();
+
+            $user->notify(new VerifyEmail($user->email, $userRequestToken->token));
+
+            return $this->sendSuccess(['Registration successful, verify email sent!']);
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
