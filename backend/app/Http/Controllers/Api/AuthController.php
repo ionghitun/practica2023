@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -127,7 +128,12 @@ class AuthController extends Controller
             $user->type = UserTypeEnum::Customer->value;
             $user->save();
 
-            $userRequestToken = UserToken::where('user_id', $user->id)->where('type', UserTokenTypeEnum::VerifyEmail)->first();
+            $userRequestToken = new UserToken();
+            $userRequestToken->user_id = $user->id;
+            $userRequestToken->type = UserTokenTypeEnum::VerifyEmail;
+            $userRequestToken->token = Str::random(60);
+
+            $userRequestToken->save();
 
             $user->notify(new VerifyEmail($user->email, $userRequestToken->token));
 

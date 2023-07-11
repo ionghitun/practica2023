@@ -1,35 +1,46 @@
-import { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { Button, Container, Image, LoadingOverlay, Stack, Text, TextInput } from '@mantine/core';
-import { useAuth } from '../../hooks/user';
-import { useVerifyEmailMutation } from '../../state/auth/api';
+import { useEffect, useRef } from 'react';
+import { Link, Navigate, useSearchParams } from 'react-router-dom';
+import { Container, Image, LoadingOverlay, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
+import { useVerifyEmailMutation } from '../../state/auth/api';
+import { useAuth } from '../../hooks/user';
 
 function VerifyEmail() {
 	const { user } = useAuth();
+	const effect = useRef(false);
 
-	const [token, setToken] = useState('');
+	const [searchParams] = useSearchParams();
+	const token = searchParams.get('token');
+	const hash = searchParams.get('hash');
+
 	const [verifyEmail, resultVerifyEmail] = useVerifyEmailMutation();
 
-	const onSubmit = async (e) => {
-		e.preventDefault();
+	useEffect(() => {
+		if (token && hash && effect.current === false) {
+			const handleEmailVerify = async () => {
+				const res = await verifyEmail({
+					token,
+					hash,
+				});
 
-		const res = await verifyEmail({
-			token,
-			hash: '',
-		});
-
-		if (!res.error) {
-			// error
-			notifications.show({
-				title: 'Success',
-				message: 'Your email has been validated!',
-				color: 'green',
-				icon: <IconCheck />,
-			});
+				if (!res.error) {
+					// error
+					notifications.show({
+						title: 'Success',
+						message: 'Your email has been validated!',
+						color: 'green',
+						icon: <IconCheck />,
+					});
+				}
+			};
+			handleEmailVerify();
 		}
-	};
+
+		return () => {
+			effect.current = true;
+		};
+	}, [token, hash, verifyEmail]);
 
 	if (user) {
 		return <Navigate to='/dashboard' />;
@@ -39,17 +50,9 @@ function VerifyEmail() {
 		<Container size='400px'>
 			<LoadingOverlay visible={resultVerifyEmail.isLoading} />
 			<Image src='/roweb-logo.svg' height={50} mt='250px' mb='md' fit='contain' />
-			<form onSubmit={onSubmit}>
-				<Stack>
-					<TextInput placeholder='Token' label='Token' withAsterisk onChange={(e) => setToken(e.target.value)} />
-					<Button fullWidth type='submit'>
-						Verify
-					</Button>
-					<Text>
-						No account? Click <Link to='/register'>here</Link> to create an account
-					</Text>
-				</Stack>
-			</form>
+			<Text>
+				Already have an account? Click <Link to='/login'>here</Link> to login
+			</Text>
 		</Container>
 	);
 }

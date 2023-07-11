@@ -39,7 +39,7 @@ function Register() {
 			notifications.show({
 				title: 'Success',
 				message: 'An email was sent to your address',
-				color: 'red',
+				color: 'green',
 				icon: <IconCheck />,
 			});
 
