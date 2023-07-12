@@ -42,10 +42,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::group(['prefix' => 'product'], function () {
         Route::get('/list', [\App\Http\Controllers\Api\ProductController::class, 'list']);
-        Route::post('/add', [\App\Http\Controllers\Api\ProductController::class, 'addProduct']);
+        //Route::post('/add', [\App\Http\Controllers\Api\ProductController::class, 'addProduct']);
         Route::post('/{id}/images', [\App\Http\Controllers\Api\ProductController::class, 'saveProductImages']);
         Route::put('/edit/{id}', [\App\Http\Controllers\Api\ProductController::class, 'editProduct']);
-        Route::delete('/delete/{id}', [\App\Http\Controllers\Api\ProductController::class, 'deleteProduct']);
+        //Route::delete('/delete/{id}', [\App\Http\Controllers\Api\ProductController::class, 'deleteProduct']);
     });
 });
 
