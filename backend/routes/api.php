@@ -39,5 +39,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
        Route::put('/edit/{id}', [CategoryController::class, 'editCategory']);
        Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory']);
     });
+
+    Route::group(['prefix' => 'product'], function () {
+        Route::get('/list', [\App\Http\Controllers\Api\ProductController::class, 'list']);
+        Route::post('/add', [\App\Http\Controllers\Api\ProductController::class, 'addProduct']);
+        Route::post('/{id}/images', [\App\Http\Controllers\Api\ProductController::class, 'saveProductImages']);
+        Route::put('/edit/{id}', [\App\Http\Controllers\Api\ProductController::class, 'editProduct']);
+        Route::delete('/delete/{id}', [\App\Http\Controllers\Api\ProductController::class, 'deleteProduct']);
+    });
 });
 
