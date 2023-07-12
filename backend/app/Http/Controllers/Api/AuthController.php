@@ -132,7 +132,6 @@ class AuthController extends Controller
             $userRequestToken->user_id = $user->id;
             $userRequestToken->type = UserTokenTypeEnum::VerifyEmail;
             $userRequestToken->token = Str::random(60);
-
             $userRequestToken->save();
 
             $user->notify(new VerifyEmail($user->email, $userRequestToken->token));
