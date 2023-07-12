@@ -23,7 +23,7 @@ class ProductController extends Controller
     public function list(): JsonResponse
     {
         try {
-            $products = Product::all();
+            $products = Product::query()->with('category')->get();
 
             return $this->sendSuccess($products);
         } catch (Throwable $exception) {
@@ -32,34 +32,34 @@ class ProductController extends Controller
             return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-//
-//    /**
-//     * @param Request $request
-//     * @return JsonResponse
-//     */
-//    public function addCategory(Request $request): JsonResponse
-//    {
-//        try {
-//            $validator = Validator::make($request->all(), [
-//                'name' => ['required', 'min:3']
-//            ]);
-//
-//            if ($validator->fails()) {
-//                return $this->sendError($validator->messages()->toArray());
-//            }
-//
-//            $category = new Category();
-//            $category->name = $request->get('name');
-//            $category->save();
-//
-//            return $this->sendSuccess(null, Response::HTTP_CREATED);
-//        } catch (Throwable $exception) {
-//            Log::error($exception);
-//
-//            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
+    //
+    //    /**
+    //     * @param Request $request
+    //     * @return JsonResponse
+    //     */
+    //    public function addCategory(Request $request): JsonResponse
+    //    {
+    //        try {
+    //            $validator = Validator::make($request->all(), [
+    //                'name' => ['required', 'min:3']
+    //            ]);
+    //
+    //            if ($validator->fails()) {
+    //                return $this->sendError($validator->messages()->toArray());
+    //            }
+    //
+    //            $category = new Category();
+    //            $category->name = $request->get('name');
+    //            $category->save();
+    //
+    //            return $this->sendSuccess(null, Response::HTTP_CREATED);
+    //        } catch (Throwable $exception) {
+    //            Log::error($exception);
+    //
+    //            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+    //        }
+    //    }
+    //
 
     public function saveProductImages(Request $request, $id): JsonResponse
     {
@@ -137,27 +137,27 @@ class ProductController extends Controller
             return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-//
-//    /**
-//     * @param $id
-//     * @return JsonResponse
-//     */
-//    public function deleteCategory($id): JsonResponse
-//    {
-//        try {
-//            $category = Category::find($id);
-//
-//            if (!$category) {
-//                return $this->sendError(['Category not found'], Response::HTTP_NOT_FOUND);
-//            }
-//
-//            $category->delete();
-//
-//            return $this->sendSuccess(null, Response::HTTP_NO_CONTENT);
-//        } catch (Throwable $exception) {
-//            Log::error($exception);
-//
-//            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    //
+    //    /**
+    //     * @param $id
+    //     * @return JsonResponse
+    //     */
+    //    public function deleteCategory($id): JsonResponse
+    //    {
+    //        try {
+    //            $category = Category::find($id);
+    //
+    //            if (!$category) {
+    //                return $this->sendError(['Category not found'], Response::HTTP_NOT_FOUND);
+    //            }
+    //
+    //            $category->delete();
+    //
+    //            return $this->sendSuccess(null, Response::HTTP_NO_CONTENT);
+    //        } catch (Throwable $exception) {
+    //            Log::error($exception);
+    //
+    //            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+    //        }
+    //    }
 }
