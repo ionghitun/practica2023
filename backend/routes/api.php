@@ -34,18 +34,20 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
 
     Route::group(['prefix' => 'category'], function () {
-       Route::get('/list', [CategoryController::class, 'list']);
-       Route::post('/add', [CategoryController::class, 'addCategory']);
-       Route::put('/edit/{id}', [CategoryController::class, 'editCategory']);
-       Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory']);
+        Route::get('/list', [CategoryController::class, 'list']);
+        Route::post('/add', [CategoryController::class, 'addCategory']);
+        Route::put('/edit/{id}', [CategoryController::class, 'editCategory']);
+        Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory']);
     });
 
     Route::group(['prefix' => 'product'], function () {
         Route::get('/list', [\App\Http\Controllers\Api\ProductController::class, 'list']);
-        //Route::post('/add', [\App\Http\Controllers\Api\ProductController::class, 'addProduct']);
+        Route::get('/{id}', [\App\Http\Controllers\Api\ProductController::class, 'getById']);
+        Route::post('/add', [\App\Http\Controllers\Api\ProductController::class, 'addProduct']);
         Route::post('/{id}/images', [\App\Http\Controllers\Api\ProductController::class, 'saveProductImages']);
+        Route::get('/{id}/images', [\App\Http\Controllers\Api\ProductController::class, 'getProductImages']);
+        Route::delete('/delete-image/{id}',  [\App\Http\Controllers\Api\ProductController::class, 'deleteImage']);
         Route::put('/edit/{id}', [\App\Http\Controllers\Api\ProductController::class, 'editProduct']);
-        //Route::delete('/delete/{id}', [\App\Http\Controllers\Api\ProductController::class, 'deleteProduct']);
+        Route::delete('/delete/{id}', [\App\Http\Controllers\Api\ProductController::class, 'deleteProduct']);
     });
 });
-

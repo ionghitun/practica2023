@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
+use Storage;
 
 /**
  *
@@ -23,7 +24,7 @@ class ProductController extends Controller
     public function list(): JsonResponse
     {
         try {
-            $products = Product::all();
+            $products = Product::query()->with('category')->get();
 
             return $this->sendSuccess($products);
         } catch (Throwable $exception) {
@@ -32,34 +33,53 @@ class ProductController extends Controller
             return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-//
-//    /**
-//     * @param Request $request
-//     * @return JsonResponse
-//     */
-//    public function addCategory(Request $request): JsonResponse
-//    {
-//        try {
-//            $validator = Validator::make($request->all(), [
-//                'name' => ['required', 'min:3']
-//            ]);
-//
-//            if ($validator->fails()) {
-//                return $this->sendError($validator->messages()->toArray());
-//            }
-//
-//            $category = new Category();
-//            $category->name = $request->get('name');
-//            $category->save();
-//
-//            return $this->sendSuccess(null, Response::HTTP_CREATED);
-//        } catch (Throwable $exception) {
-//            Log::error($exception);
-//
-//            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
+
+    public function getById($id): JsonResponse
+    {
+        try {
+            $product = Product::with('category')->find($id);
+            return $this->sendSuccess($product);
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function addProduct(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'category_id' => 'required|exists:categories,id',
+                'name' => ['required', 'min:3'],
+                'description' => 'required|min:10',
+                'price' => 'required|numeric',
+                'stock' => 'required|integer'
+            ]);
+            if ($validator->fails()) {
+                return $this->sendError($validator->messages()->toArray());
+            }
+
+            $product = new Product();
+            $product->category_id = $request->get('category_id');
+            $product->name = $request->get('name');
+            $product->description = $request->get('description');
+            $product->price = $request->get('price');
+            $product->stock = $request->get('stock');
+            $product->save();
+
+            return $this->sendSuccess(null, Response::HTTP_CREATED);
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     public function saveProductImages(Request $request, $id): JsonResponse
     {
@@ -71,7 +91,6 @@ class ProductController extends Controller
             }
 
             $validator = Validator::make($request->all(), [
-                'images' => 'required|array',
                 'images.*' => 'required|image'
             ]);
 
@@ -79,17 +98,35 @@ class ProductController extends Controller
                 return $this->sendError($validator->messages()->toArray());
             }
 
-            /** @var UploadedFile $requestImage */
-            foreach ($request->file('images') as $requestImage) {
-                $path = $requestImage->store('products/');
 
-                $productImage = new ProductImage();
-                $productImage->product_id = $product->id;
-                $productImage->path = $path;
-                $productImage->save();
-            }
+            /** @var UploadedFile $requestImage */
+            $requestImage = $request->file('images');
+            $path = $requestImage->store('products');
+
+            $productImage = new ProductImage();
+            $productImage->product_id = $product->id;
+            $productImage->path = $path;
+            $productImage->save();
 
             return $this->sendSuccess(null, Response::HTTP_CREATED);
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getProductImages($id): JsonResponse
+    {
+        try {
+            $product = Product::findOrFail($id);
+            $images = $product->productImages;
+
+            $imageUrls = $images->map(function ($image) {
+                return ["path" => "/storage/" . ($image->path), "id" => $image->id];
+            });
+
+            return $this->sendSuccess($imageUrls);
         } catch (Throwable $exception) {
             Log::error($exception);
 
@@ -115,7 +152,7 @@ class ProductController extends Controller
                 'category_id' => 'required|exists:categories,id',
                 'name' => ['required', 'min:3'],
                 'description' => 'required|min:10',
-                'price' => 'required|decimal',
+                'price' => 'required|numeric',
                 'stock' => 'required|integer'
             ]);
 
@@ -137,27 +174,65 @@ class ProductController extends Controller
             return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-//
-//    /**
-//     * @param $id
-//     * @return JsonResponse
-//     */
-//    public function deleteCategory($id): JsonResponse
-//    {
-//        try {
-//            $category = Category::find($id);
-//
-//            if (!$category) {
-//                return $this->sendError(['Category not found'], Response::HTTP_NOT_FOUND);
-//            }
-//
-//            $category->delete();
-//
-//            return $this->sendSuccess(null, Response::HTTP_NO_CONTENT);
-//        } catch (Throwable $exception) {
-//            Log::error($exception);
-//
-//            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
-//        }
-//    }
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function deleteProduct($id): JsonResponse
+    {
+        try {
+            $product = Product::find($id);
+
+            if (!$product) {
+                return $this->sendError(['Product not found'], Response::HTTP_NOT_FOUND);
+            }
+
+            $productImages = ProductImage::where('product_id', $product->id)->get();
+
+            foreach ($productImages as $image) {
+                $path = $image->path;
+                $image->delete();
+
+                if (Storage::exists($path)) {
+                    Storage::delete($path);
+                }
+            }
+
+            $product->delete();
+
+            return $this->sendSuccess(null, Response::HTTP_NO_CONTENT);
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function deleteImage($id): JsonResponse
+    {
+        try {
+            $productImage = ProductImage::find($id);
+
+            if (!$productImage) {
+                return $this->sendError(['Product Image not found'], Response::HTTP_NOT_FOUND);
+            }
+            $path = $productImage->path;
+            if (Storage::exists($path)) {
+                Storage::delete($path);
+            }
+
+            $productImage->delete();
+
+            return $this->sendSuccess(null, Response::HTTP_NO_CONTENT);
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

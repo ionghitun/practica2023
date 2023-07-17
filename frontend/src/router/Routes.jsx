@@ -12,6 +12,8 @@ import Register from '../pages/register';
 import ForgotPassword from '../pages/forgotPassword';
 import ResetPassword from '../pages/resetPassword';
 import VerifyEmail from '../pages/verifyEmail';
+import Products from '../pages/products/Products';
+import Product from '../pages/products/product/Product';
 
 export default function AppRoutes() {
 	return (
@@ -27,6 +29,12 @@ export default function AppRoutes() {
 					{/*Authenticated Routes */}
 					<Route path='dashboard' element={<Dashboard />} />
 					<Route path='categories' element={<Categories />} />
+					<Route path='products'>
+						<Route index element={<Products />} />
+						<Route path=':id'>
+							<Route index element={<Product />} />
+						</Route>
+					</Route>
 					<Route path='users'>
 						<Route index element={<Users />} />
 						<Route path=':id'>
