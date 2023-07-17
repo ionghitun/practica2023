@@ -60,6 +60,11 @@ const data = [
 		label: 'Categories',
 		icon: IconCategory,
 	},
+	{
+		link: '/products',
+		label: 'Products',
+		icon: IconCategory,
+	},
 ];
 
 function Navbar({ opened = false, setOpened = null }) {

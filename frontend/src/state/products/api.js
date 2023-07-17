@@ -23,6 +23,14 @@ export const productsEndpoints = api.injectEndpoints({
 			},
 			providesTags: ['Product'],
 		}),
+		createProductImages: builder.mutation({
+			query: ({ id, ...data }) => ({
+			  url: `/product/${id}/images`,
+			  method: 'POST',
+			  data,
+			}),
+			invalidatesTags: ['Product'],
+		}),
 		createProduct: builder.mutation({
 			query: (data) => ({
 				url: '/product/add',
@@ -52,8 +60,9 @@ export const productsEndpoints = api.injectEndpoints({
 export const {
 	useGetProductsQuery,
 	useGetProductImagesQuery,
+	useCreateProductImagesMutation,
 	useGetProductQuery,
-	useCreateProductsMutation,
+	useCreateProductMutation,
 	useUpdateProductMutation,
 	useDeleteProductMutation,
 } = productsEndpoints;
