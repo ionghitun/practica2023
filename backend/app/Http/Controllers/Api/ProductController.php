@@ -66,7 +66,7 @@ class ProductController extends Controller
                 'category_id' => 'required|exists:categories,id',
                 'name' => ['required', 'min:3'],
                 'description' => 'required|min:10',
-                'price' => 'required|decimal',
+                'price' => 'required|numeric',
                 'stock' => 'required|integer'
             ]);
 
@@ -164,7 +164,7 @@ class ProductController extends Controller
                 'category_id' => 'required|exists:categories,id',
                 'name' => ['required', 'min:3'],
                 'description' => 'required|min:10',
-                'price' => 'required|decimal',
+                'price' => 'required|numeric',
                 'stock' => 'required|integer'
             ]);
 

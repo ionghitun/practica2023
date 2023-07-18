@@ -1,17 +1,55 @@
-import { Group, Title, LoadingOverlay, Paper, Table, Text, ActionIcon } from '@mantine/core';
-import { useGetProductsQuery } from '../../state/products/api';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { Group, Title, LoadingOverlay, Paper, Table, Text, ActionIcon, Button } from '@mantine/core';
+import { IconEdit, IconPlus, IconTrash } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import ModalAddEditProduct from './ModalAddEditProduct';
+import { useDeleteProductMutation, useGetProductsQuery } from '../../state/products/api';
 
 export default function Products() {
-	const { data: products, isFetching: isFetchingProducts } = useGetProductsQuery();
+	const [modalProductOpened, { open: modalProductOpen, close: modalProductClose }] = useDisclosure();
 
-	console.log(products);
+	const { data: products, isFetching: isFetchingProducts } = useGetProductsQuery();
+	const [deleteProduct, resultDeleteProduct] = useDeleteProductMutation();
+	const navigate = useNavigate();
+
+	const handleEditProduct = (id) => () => {
+		navigate(`/products/${id}`);
+	};
+
+	const handleDeleteProduct = (id) => () => {
+		notifications.show({
+			title: 'Are you sure you want to delete?',
+			autoClose: false,
+			message: (
+				<div>
+					<Group mt='xl'>
+						<Button variant='outline' onClick={() => notifications.clean()}>
+							No
+						</Button>
+						<Button
+							onClick={() => {
+								deleteProduct(id);
+								notifications.clean();
+							}}
+						>
+							Yes
+						</Button>
+					</Group>
+				</div>
+			),
+		});
+	};
 
 	return (
 		<div>
-			<LoadingOverlay visible={isFetchingProducts} />
+			<ModalAddEditProduct opened={modalProductOpened} onClose={modalProductClose} />
+			<LoadingOverlay visible={isFetchingProducts || resultDeleteProduct.isLoading} />
 			<Group mb='md' position='apart'>
 				<Title>Products</Title>
+				<Button onClick={modalProductOpen} leftIcon={<IconPlus />}>
+					Add Product
+				</Button>
 			</Group>
 			<Paper>
 				<Table highlightOnHover withBorder>
@@ -49,10 +87,10 @@ export default function Products() {
 								</td>
 								<td style={{ width: '100px' }}>
 									<Group>
-										<ActionIcon onClick={() => {}}>
+										<ActionIcon onClick={handleEditProduct(product.id)}>
 											<IconEdit />
 										</ActionIcon>
-										<ActionIcon onClick={() => {}}>
+										<ActionIcon onClick={handleDeleteProduct(product.id)}>
 											<IconTrash />
 										</ActionIcon>
 									</Group>
