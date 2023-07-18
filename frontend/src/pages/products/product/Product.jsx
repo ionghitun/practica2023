@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom';
 import { Button, Group, Image, LoadingOverlay, Paper, SimpleGrid, Text, Title } from '@mantine/core';
-import { useGetProductQuery } from '../../../state/products/api';
 import { useDisclosure } from '@mantine/hooks';
-import ModalAddEditProduct from '../ModalAddEditProduct';
 import { IconEdit } from '@tabler/icons-react';
+import ModalAddEditProduct from '../ModalAddEditProduct';
+import { useGetProductQuery } from '../../../state/products/api';
 
 export default function Product() {
 	const { id } = useParams();
@@ -12,7 +12,6 @@ export default function Product() {
 
 	const { data: product = {}, isFetching: isFetchingProduct } = useGetProductQuery({ id });
 
-	console.log(product);
 	return (
 		<div>
 			<ModalAddEditProduct opened={modalProductOpened} onClose={modalProductClose} product={product} />
@@ -32,11 +31,14 @@ export default function Product() {
 			</Paper>
 			<Paper my='xl'>
 				<Title mb='xl'>Gallery</Title>
-				<SimpleGrid cols={6} spacing='xl'>
-					{product?.product_images?.map((productImage) => (
-						<Image key={productImage.id} src={productImage.image_url} fit='cover' height={200} radius='lg' />
-					))}
-				</SimpleGrid>
+				{!!product?.product_images?.length && (
+					<SimpleGrid cols={6} spacing='xl'>
+						{product?.product_images?.map((productImage) => (
+							<Image key={productImage.id} src={productImage.image_url} fit='cover' height={200} radius='lg' />
+						))}
+					</SimpleGrid>
+				)}
+				{!product?.product_images?.length && <Text>No images</Text>}
 			</Paper>
 		</div>
 	);

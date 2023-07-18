@@ -69,6 +69,10 @@ export default function ModalAddEditProduct({ opened = false, onClose = null, pr
 		const resultAddEditProduct = product ? await updateProduct(payload) : await addProduct(payload);
 
 		if (!resultAddEditProduct.error) {
+			if (!productInfo.images?.length) {
+				return handleClose();
+			}
+
 			const formData = new FormData();
 
 			productInfo.images.forEach((file) => {
@@ -84,7 +88,9 @@ export default function ModalAddEditProduct({ opened = false, onClose = null, pr
 
 	return (
 		<Modal opened={opened} onClose={handleClose} title={product ? 'Edit Product' : 'Add Product'}>
-			<LoadingOverlay visible={resultAddProduct.isLoading || resultUpdateProduct.isLoading || isFetchingCategories} />
+			<LoadingOverlay
+				visible={resultAddProduct.isLoading || resultUpdateProduct.isLoading || resultAddImages.isLoading || isFetchingCategories}
+			/>
 			<form onSubmit={onSubmit}>
 				<Stack spacing={10}>
 					<TextInput label='Name' placeholder='Name' name='name' value={productInfo.name} onChange={handleChange}></TextInput>
