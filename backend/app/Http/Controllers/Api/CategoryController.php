@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Category;
+use App\Services\CategoryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -24,6 +25,30 @@ class CategoryController extends Controller
             $categories = Category::all();
 
             return $this->sendSuccess($categories);
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function tree(): JsonResponse
+    {
+        try {
+            $categories = Category::with('subCategories')->get();
+
+            $categoriesTree = [];
+
+            foreach ($categories as $category) {
+                if (!$category->parent_id) {
+                    $categoriesTree[] = CategoryService::buildCategoryTree($category);
+                }
+            }
+
+            return $this->sendSuccess($categoriesTree);
         } catch (Throwable $exception) {
             Log::error($exception);
 

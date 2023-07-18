@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,18 +35,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
 
     Route::group(['prefix' => 'category'], function () {
-       Route::get('/list', [CategoryController::class, 'list']);
-       Route::post('/add', [CategoryController::class, 'addCategory']);
-       Route::put('/edit/{id}', [CategoryController::class, 'editCategory']);
-       Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory']);
+        Route::get('/list', [CategoryController::class, 'list']);
+        Route::get('/tree', [CategoryController::class, 'tree']);
+        Route::post('/add', [CategoryController::class, 'addCategory']);
+        Route::put('/edit/{id}', [CategoryController::class, 'editCategory']);
+        Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory']);
     });
 
     Route::group(['prefix' => 'product'], function () {
-        Route::get('/list', [\App\Http\Controllers\Api\ProductController::class, 'list']);
-        //Route::post('/add', [\App\Http\Controllers\Api\ProductController::class, 'addProduct']);
-        Route::post('/{id}/images', [\App\Http\Controllers\Api\ProductController::class, 'saveProductImages']);
-        Route::put('/edit/{id}', [\App\Http\Controllers\Api\ProductController::class, 'editProduct']);
-        //Route::delete('/delete/{id}', [\App\Http\Controllers\Api\ProductController::class, 'deleteProduct']);
+        Route::get('/list', [ProductController::class, 'list']);
+        Route::get('/{id}', [ProductController::class, 'getProduct']);
+        Route::post('/add', [ProductController::class, 'addProduct']);
+        Route::post('/{id}/images', [ProductController::class, 'saveProductImages']);
+        Route::put('/edit/{id}', [ProductController::class, 'editProduct']);
+        Route::delete('/delete/{id}', [ProductController::class, 'deleteProduct']);
     });
 });
-
