@@ -7,21 +7,32 @@ export const productsEndpoints = api.injectEndpoints({
 			transformResponse: (res) => {
 				return res.data;
 			},
-			providesTags: ['Products'],
+			providesTags: ({ result }) =>
+				result
+					? [...result.map(({ id }) => ({ type: 'Product', id })), { type: 'Product', id: 'LIST' }]
+					: [{ type: 'Product', id: 'LIST' }],
 		}),
 		getProduct: builder.query({
 			query: ({ id }) => ({ url: `/product/${id}` }),
 			transformResponse: (res) => {
 				return res.data;
 			},
-			providesTags: ['Product'],
+			providesTags: (result, error, id) => [{ type: 'Product', id }],
 		}),
 		getProductImages: builder.query({
 			query: ({ id }) => ({ url: `/product/${id}/images` }),
 			transformResponse: (res) => {
 				return res.data;
 			},
-			providesTags: ['Product'],
+			invalidatesTags: [{ type: 'Product' }],
+		}),
+		createProductImages: builder.mutation({
+			query: ({ id, data }) => ({
+				url: `/product/${id}/images`,
+				method: 'POST',
+				data,
+			}),
+			invalidatesTags: (result, error, id) => [{ type: 'Product', id }],
 		}),
 		createProduct: builder.mutation({
 			query: (data) => ({
@@ -29,7 +40,7 @@ export const productsEndpoints = api.injectEndpoints({
 				method: 'POST',
 				data,
 			}),
-			invalidatesTags: ['Products'],
+			invalidatesTags: [{ type: 'Product', id: 'LIST' }],
 		}),
 		updateProduct: builder.mutation({
 			query: ({ id, ...data }) => ({
@@ -37,14 +48,14 @@ export const productsEndpoints = api.injectEndpoints({
 				method: 'PUT',
 				data,
 			}),
-			invalidatesTags: ['Products'],
+			invalidatesTags: (result, error, id) => [{ type: 'Product', id }],
 		}),
 		deleteProduct: builder.mutation({
 			query: (id) => ({
 				url: `/product/delete/${id}`,
 				method: 'DELETE',
 			}),
-			invalidatesTags: ['Products'],
+			invalidatesTags: [{ type: 'Product' }],
 		}),
 	}),
 });
@@ -56,4 +67,6 @@ export const {
 	useCreateProductsMutation,
 	useUpdateProductMutation,
 	useDeleteProductMutation,
+	useCreateProductMutation,
+	useCreateProductImagesMutation,
 } = productsEndpoints;
