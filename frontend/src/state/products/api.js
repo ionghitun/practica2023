@@ -12,6 +12,13 @@ export const productsEndpoints = api.injectEndpoints({
 					? [...result.map(({ id }) => ({ type: 'Product', id })), { type: 'Product', id: 'LIST' }]
 					: [{ type: 'Product', id: 'LIST' }],
 		}),
+		getPublicProducts: builder.query({
+			query: (params) => ({ url: '/products', params }),
+			transformResponse: (res) => {
+				return res.data;
+			},
+			providesTags: [{ type: 'Product', id: 'LIST' }],
+		}),
 		getProduct: builder.query({
 			query: ({ id }) => ({ url: `/product/${id}` }),
 			transformResponse: (res) => {
@@ -62,9 +69,9 @@ export const productsEndpoints = api.injectEndpoints({
 
 export const {
 	useGetProductsQuery,
+	useGetPublicProductsQuery,
 	useGetProductImagesQuery,
 	useGetProductQuery,
-	useCreateProductsMutation,
 	useUpdateProductMutation,
 	useDeleteProductMutation,
 	useCreateProductMutation,
