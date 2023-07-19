@@ -239,7 +239,7 @@ class ProductController extends Controller
             // 1 -> 10-50
             // 2 -> >50
 
-            $products = Product::with('category')
+            $products = Product::with(['category', 'productImages'])
                 ->when($search, function ($query) use ($search) {
                     $query->where(function ($query) use ($search) {
                         $query->where('name', 'LIKE', '%' . $search . '%')

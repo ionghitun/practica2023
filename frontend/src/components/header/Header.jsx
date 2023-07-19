@@ -23,23 +23,26 @@ function Header({ opened = false, setOpened = null }) {
 						<Image src='/roweb-logo.svg' height={24} />
 					</Link>
 				</div>
-				<Group>
-					<Menu shadow='md'>
-						<Menu.Target>
-							<ActionIcon size='xl'>
-								<Avatar radius='xl' />
-							</ActionIcon>
-						</Menu.Target>
-						<Menu.Dropdown>
-							<Link to={`/users/${user.id}`}>
-								<Menu.Item icon={<IconUser size={14} />}>My Profile</Menu.Item>
-							</Link>
-							<Menu.Item icon={<IconLogout size={14} />} onClick={logoutUser}>
-								Logout
-							</Menu.Item>
-						</Menu.Dropdown>
-					</Menu>
-				</Group>
+				{user?.id && (
+					<Group>
+						<Menu shadow='md'>
+							<Menu.Target>
+								<ActionIcon size='xl'>
+									<Avatar radius='xl' />
+								</ActionIcon>
+							</Menu.Target>
+							<Menu.Dropdown>
+								<Link to={`/users/${user.id}`}>
+									<Menu.Item icon={<IconUser size={14} />}>My Profile</Menu.Item>
+								</Link>
+								<Menu.Item icon={<IconLogout size={14} />} onClick={logoutUser}>
+									Logout
+								</Menu.Item>
+							</Menu.Dropdown>
+						</Menu>
+					</Group>
+				)}
+				{!user?.id && <Link to='/login'>login</Link>}
 			</Group>
 		</MantineHeader>
 	);

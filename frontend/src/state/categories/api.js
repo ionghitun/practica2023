@@ -9,6 +9,13 @@ export const categoriesEndpoints = api.injectEndpoints({
 			},
 			providesTags: ['Categories'],
 		}),
+		getCategoriesTree: builder.query({
+			query: (params) => ({ url: '/categories', params }),
+			transformResponse: (res) => {
+				return res.data;
+			},
+			providesTags: ['Categories'],
+		}),
 		createCategories: builder.mutation({
 			query: (data) => ({
 				url: '/category/add',
@@ -35,5 +42,10 @@ export const categoriesEndpoints = api.injectEndpoints({
 	}),
 });
 
-export const { useGetCategoriesQuery, useCreateCategoriesMutation, useUpdateCategoryMutation, useDeleteCategoryMutation } =
-	categoriesEndpoints;
+export const {
+	useGetCategoriesQuery,
+	useGetCategoriesTreeQuery,
+	useCreateCategoriesMutation,
+	useUpdateCategoryMutation,
+	useDeleteCategoryMutation,
+} = categoriesEndpoints;

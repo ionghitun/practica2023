@@ -5,9 +5,9 @@ export default function Auth({ children }) {
 		refetchOnMountOrArgChange: true,
 	});
 
-	if (isLoading) {
-		return <div></div>;
-	}
+	// if (isLoading) {
+	// 	return <div></div>;
+	// }
 
 	return children;
 }
