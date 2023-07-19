@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,8 @@ Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
 Route::post('/resend-verify-email', [AuthController::class, 'resendVerifyEmail'])->middleware('apiThrottle:3,60');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('apiThrottle:3,60');
 Route::post('/change-password', [AuthController::class, 'changePassword']);
+
+Route::get('products', [ProductController::class, 'searchProducts']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'getUser']);
