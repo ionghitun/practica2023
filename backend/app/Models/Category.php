@@ -15,6 +15,14 @@ class Category extends Model
     use HasFactory;
 
     /**
+     * @var array
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
      * @return HasMany
      */
     public function products(): HasMany

@@ -12,7 +12,7 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = Category::factory(3)->create();;
+        $categories = Category::factory(3)->create();
 
         foreach ($categories as $parentCategory) {
             $childCategories = Category::factory(5)->create([

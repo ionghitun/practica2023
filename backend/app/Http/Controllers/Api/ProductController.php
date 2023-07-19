@@ -7,6 +7,7 @@ use App\Models\ProductImage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -200,13 +201,64 @@ class ProductController extends Controller
                 return $this->sendError(['Product not found'], Response::HTTP_NOT_FOUND);
             }
 
+            DB::beginTransaction();
+
             foreach ($product->productImages as $productImage) {
                 Storage::delete($productImage->path);
                 $productImage->delete();
             }
             $product->delete();
 
+            DB::commit();
+
             return $this->sendSuccess(null, Response::HTTP_NO_CONTENT);
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function searchProducts(Request $request): JsonResponse
+    {
+        try {
+            //For page number in request param 'page'
+            $perPage = $request->get('per_page', 6);
+            $sortColumn = $request->get('sort_by', 'id');
+            $sortOrder = $request->get('sort_order', 'ASC');
+            $categoryId = $request->get('category');
+            $stock = $request->get('stock');
+            $search = $request->get('search');
+
+            //Filter stock
+            // 0 -> <10
+            // 1 -> 10-50
+            // 2 -> >50
+
+            $products = Product::with('category')
+                ->when($search, function ($query) use ($search) {
+                    $query->where(function ($query) use ($search) {
+                        $query->where('name', 'LIKE', '%' . $search . '%')
+                            ->orWhere('description', 'LIKE', '%' . $search . '%');
+                    });
+                })->when($categoryId, function ($query) use ($categoryId) {
+                    $query->where('category_id', $categoryId);
+                })->when(in_array($stock, ["0", "1", "2"], true), function ($query) use ($stock) {
+                    if ($stock === "0") {
+                        $query->where('stock', '<', 10);
+                    } elseif ($stock === "1") {
+                        $query->where('stock', '>=', 10)->where('stock', '<=', 50);
+                    } else {
+                        $query->where('stock', '>', 50);
+                    }
+                })->orderBy($sortColumn, $sortOrder)
+                ->paginate($perPage);
+
+            return $this->sendSuccess($products);
         } catch (Throwable $exception) {
             Log::error($exception);
 

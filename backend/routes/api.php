@@ -29,6 +29,9 @@ Route::post('/resend-verify-email', [AuthController::class, 'resendVerifyEmail']
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('apiThrottle:3,60');
 Route::post('/change-password', [AuthController::class, 'changePassword']);
 
+Route::get('categories', [CategoryController::class, 'tree']);
+Route::get('products', [ProductController::class, 'searchProducts']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'getUser']);
     Route::post('/user', [UserController::class, 'updateUser']);
@@ -36,7 +39,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::group(['prefix' => 'category'], function () {
         Route::get('/list', [CategoryController::class, 'list']);
-        Route::get('/tree', [CategoryController::class, 'tree']);
         Route::post('/add', [CategoryController::class, 'addCategory']);
         Route::put('/edit/{id}', [CategoryController::class, 'editCategory']);
         Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory']);

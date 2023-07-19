@@ -15,6 +15,15 @@ class ProductImage extends Model
 {
     use HasFactory;
 
+    /**
+     * @var array
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'path'
+    ];
+
     /** @var array */
     protected $appends = [
         'image_url',
