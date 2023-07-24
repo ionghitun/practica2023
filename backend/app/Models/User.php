@@ -92,4 +92,12 @@ class User extends BaseModel implements AuthenticatableContract, MustVerifyEmail
     {
         return $this->hasMany(UserToken::class);
     }
+
+     /**
+     * @return HasMany
+     */
+    public function userImages(): HasMany
+    {
+        return $this->hasMany(UserImage::class);
+    }
 }

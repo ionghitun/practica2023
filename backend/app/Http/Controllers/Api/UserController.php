@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Models\UserImage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -37,15 +40,6 @@ class UserController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function updateUser(Request $request): JsonResponse
-    {
-        //TODO
-    }
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function logout(Request $request): JsonResponse
     {
         try {
@@ -65,4 +59,18 @@ class UserController extends Controller
             return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    public function getUserImage($id): JsonResponse
+    {
+        try {
+            /** @var User $user */
+            $user = User::with(['userImages'])->where('id', $id)->first();
+            return $this->sendSuccess($user->toArray());
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return $this->sendError([], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+  
+
 }

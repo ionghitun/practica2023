@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\JsonResponse;
@@ -239,15 +240,28 @@ class ProductController extends Controller
             // 1 -> 10-50
             // 2 -> >50
 
+            function getAllChildCategoryIds($categoryId) {
+                $childCategoryIds = [$categoryId];
+    
+                $childCategories = Category::where('parent_id', $categoryId)->get();
+    
+                foreach ($childCategories as $childCategory) {
+                    $childCategoryIds = array_merge($childCategoryIds, getAllChildCategoryIds($childCategory->id));
+                }
+    
+                return $childCategoryIds;
+            }  
+            $categoryIds = getAllChildCategoryIds($categoryId);
+
+
             $products = Product::with(['category', 'productImages'])
                 ->when($search, function ($query) use ($search) {
                     $query->where(function ($query) use ($search) {
                         $query->where('name', 'LIKE', '%' . $search . '%')
                             ->orWhere('description', 'LIKE', '%' . $search . '%');
                     });
-                })->when($categoryId, function ($query) use ($categoryId) {
-                    $query->where('category_id', $categoryId);
-                })->when(in_array($stock, ["0", "1", "2"], true), function ($query) use ($stock) {
+                })->whereIn('category_id', $categoryIds) 
+                  ->when(in_array($stock, ["0", "1", "2"], true), function ($query) use ($stock) {
                     if ($stock === "0") {
                         $query->where('stock', '<', 10);
                     } elseif ($stock === "1") {

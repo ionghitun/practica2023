@@ -12,6 +12,11 @@ export const userEndpoints = api.injectEndpoints({
 			transformResponse: (res) => res.data.result,
 			providesTags: (result, error, id) => [{ type: 'User', id }],
 		}),
+		getUserImage: builder.query({
+			query: (id) => ({ url: `/user/${id}` }),
+			transformResponse: (res) => res.data,
+			providesTags: (result, error, id) => [{ type: 'User', id }],
+		}),
 		getUsers: builder.query({
 			query: (params) => ({ url: '/users', params }),
 			transformResponse: (res) => {
@@ -97,6 +102,7 @@ export const {
 	useGetUserQuery,
 	useGetUserDetailsQuery,
 	useGetUsersQuery,
+	useGetUserImageQuery,
 	useCreateUserMutation,
 	useUpdateUserMutation,
 	useDeleteUserMutation,

@@ -14,16 +14,22 @@ import ResetPassword from '../pages/resetPassword';
 import VerifyEmail from '../pages/verifyEmail';
 import Products from '../pages/products';
 import Product from '../pages/products/product';
+import ProductDetail from '../pages/home/productpage/productDetail';
 
 export default function AppRoutes() {
 	return (
 		<Routes>
-			<Route index element={<Home />} />
+			<Route index element={<Home />} />			
 			<Route path='/login' element={<Login />} />
 			<Route path='/register' element={<Register />} />
 			<Route path='/forgot-password' element={<ForgotPassword />} />
 			<Route path='/change-password' element={<ResetPassword />} />
 			<Route path='/verify-email' element={<VerifyEmail />} />
+			<Route path='/product'>
+				<Route path=':id'>
+					<Route index element={<ProductDetail />} />
+				</Route>
+			</Route> 
 			<Route element={<PrivateRoute />}>
 				<Route path='/' element={<Layout />}>
 					{/*Authenticated Routes */}

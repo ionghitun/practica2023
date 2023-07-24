@@ -34,6 +34,8 @@ Route::get('products', [ProductController::class, 'searchProducts']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'getUser']);
+    Route::get('/user/{id}', [UserController::class, 'getUserImage']);
+    Route::post('/user/{id}/images', [UserController::class, 'saveUserImages']);
     Route::post('/user', [UserController::class, 'updateUser']);
     Route::post('/logout', [UserController::class, 'logout']);
 
