@@ -233,11 +233,13 @@ class ProductController extends Controller
             $categoryId = $request->get('category');
             $stock = $request->get('stock');
             $search = $request->get('search');
+            $productId = $request->get('product_id');
 
             //Filter stock
             // 0 -> <10
             // 1 -> 10-50
             // 2 -> >50
+
 
             $products = Product::with(['category', 'productImages'])
                 ->when($search, function ($query) use ($search) {
@@ -246,16 +248,20 @@ class ProductController extends Controller
                             ->orWhere('description', 'LIKE', '%' . $search . '%');
                     });
                 })->when($categoryId, function ($query) use ($categoryId) {
-                    $query->where('category_id', $categoryId);
-                })->when(in_array($stock, ["0", "1", "2"], true), function ($query) use ($stock) {
-                    if ($stock === "0") {
-                        $query->where('stock', '<', 10);
-                    } elseif ($stock === "1") {
-                        $query->where('stock', '>=', 10)->where('stock', '<=', 50);
-                    } else {
-                        $query->where('stock', '>', 50);
-                    }
-                })->orderBy($sortColumn, $sortOrder)
+                $query->where('category_id', $categoryId);
+            })->when(in_array($stock, ["0", "1", "2"], true), function ($query) use ($stock) {
+                if ($stock === "0") {
+                    $query->where('stock', '<', 10);
+                } elseif ($stock === "1") {
+                    $query->where('stock', '>=', 10)->where('stock', '<=', 50);
+                } else {
+                    $query->where('stock', '>', 50);
+                }
+            })
+                ->when($productId, function ($query) use ($productId) {
+                    $query->where('id', $productId);
+                })
+                ->orderBy($sortColumn, $sortOrder)
                 ->paginate($perPage);
 
             return $this->sendSuccess($products);

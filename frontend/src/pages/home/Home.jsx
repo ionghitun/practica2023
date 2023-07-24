@@ -1,20 +1,29 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Badge, Button, Card, Center, Container, Group, Image, Pagination, Paper, SimpleGrid, Text, TextInput, Title } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import Header from '../../components/header';
 import Tree from '../../components/misc/Tree';
 import { useGetCategoriesTreeQuery } from '../../state/categories/api';
 import { useGetPublicProductsQuery } from '../../state/products/api';
+import { Link } from 'react-router-dom';
 
 export default function Home() {
 	const [search, setSearch] = useState('');
 	const [opened, setOpened] = useState(false);
 	const [activePage, setPage] = useState(1);
-
+	const [selectedCategory, setSelectedCategory] = useState(null);
 	const [debouncedSearch] = useDebouncedValue(search, 1_000);
-
 	const { data: categories = [] } = useGetCategoriesTreeQuery();
-	const { data: products = {} } = useGetPublicProductsQuery({ search: debouncedSearch, page: activePage, per_page: 8 });
+	const { data: products = {} } = useGetPublicProductsQuery({
+		search: debouncedSearch,
+		category: selectedCategory,
+		page: activePage,
+		per_page: 8,
+	});
+
+	const handleCategorySelect = (categoryId) => {
+		setSelectedCategory(categoryId);
+	};
 
 	return (
 		<div>
@@ -22,7 +31,7 @@ export default function Home() {
 			<Container size='lg'>
 				<Paper>
 					<Title align='center'>Categorii principale</Title>
-					<Tree options={categories} />
+					<Tree options={categories} selected={selectedCategory} onChange={handleCategorySelect} />
 				</Paper>
 				<Paper mt='xl' p='lg'>
 					<Title align='center' py='lg'>
@@ -45,7 +54,7 @@ export default function Home() {
 									{product.description}
 								</Text>
 								<Button variant='light' color='blue' fullWidth mt='md' radius='md'>
-									Book classic tour now
+									<Link to={`/product/${product.id}`}>Buy now</Link>
 								</Button>
 							</Card>
 						))}

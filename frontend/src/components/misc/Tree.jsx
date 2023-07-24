@@ -1,4 +1,5 @@
-import { List, Stack } from '@mantine/core';
+import React from 'react';
+import { Tabs } from '@mantine/core';
 
 function TreeNode({ option, selected, setSelected }) {
 	function onSelect(e) {
@@ -7,23 +8,18 @@ function TreeNode({ option, selected, setSelected }) {
 	}
 
 	return (
-		<List.Item onClick={onSelect}>
-			<Stack style={{ backgroundColor: option === selected && '#4dabf733' }}>{option.name}</Stack>
-			{/* <List listStyleType='none' withPadding style={{ borderLeft: '2px solid #ddd' }}>
-				{option.subCategories?.map((child, i) => (
-					<TreeNode option={child} key={i} selected={selected} setSelected={setSelected} />
-				))}
-			</List> */}
-		</List.Item>
+		<Tabs.Tab value={option.name} active={option === selected} onClick={onSelect}>
+			{option.name}
+		</Tabs.Tab>
 	);
 }
 
 export default function Tree({ options, selected, onChange }) {
 	return (
-		<List listStyleType='none' withPadding>
+		<Tabs active={selected && selected.name} onTabChange={(name) => onChange(options.find((option) => option.name === name))}>
 			{options.map((option) => (
 				<TreeNode key={option.value} option={option} selected={selected} setSelected={onChange} />
 			))}
-		</List>
+		</Tabs>
 	);
 }

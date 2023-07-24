@@ -1,0 +1,1 @@
+{"version":3,"file":"Carousel.errors.js","sources":["../src/Carousel.errors.ts"],"sourcesContent":["export const CAROUSEL_ERRORS = {\n  context: '[@mantine/carousel] Carousel.Slide was rendered outside of Carousel context',\n};\n"],"names":[],"mappings":"AAAY,MAAC,eAAe,GAAG;AAC/B,EAAE,OAAO,EAAE,6EAA6E;AACxF;;;;"}

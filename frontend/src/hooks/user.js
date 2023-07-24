@@ -7,6 +7,7 @@ export const useAuth = () => {
 	return useMemo(
 		() => ({
 			user,
+			userEmail: user?.email,
 		}),
 		[user]
 	);

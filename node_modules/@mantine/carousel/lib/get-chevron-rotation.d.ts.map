@@ -1,0 +1,1 @@
+{"version":3,"file":"get-chevron-rotation.d.ts","sourceRoot":"","sources":["../src/get-chevron-rotation.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,MAAM,SAAS,CAAC;AAE9C,UAAU,OAAO;IACf,GAAG,EAAE,KAAK,GAAG,KAAK,CAAC;IACnB,WAAW,EAAE,mBAAmB,CAAC;IACjC,SAAS,EAAE,MAAM,GAAG,UAAU,CAAC;CAChC;AAED,wBAAgB,kBAAkB,CAAC,EAAE,GAAG,EAAE,WAAW,EAAE,SAAS,EAAE,EAAE,OAAO,UAM1E"}

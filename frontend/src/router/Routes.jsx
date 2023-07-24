@@ -15,11 +15,14 @@ import VerifyEmail from '../pages/verifyEmail';
 import Products from '../pages/products';
 import Product from '../pages/products/product';
 
+import PublicProduct from '../pages/product';
+
 export default function AppRoutes() {
 	return (
 		<Routes>
 			<Route index element={<Home />} />
 			<Route path='/login' element={<Login />} />
+			<Route path='/product/:id' element={<PublicProduct />} />
 			<Route path='/register' element={<Register />} />
 			<Route path='/forgot-password' element={<ForgotPassword />} />
 			<Route path='/change-password' element={<ResetPassword />} />
