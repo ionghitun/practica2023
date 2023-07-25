@@ -7,6 +7,7 @@ import { useAuth } from '../../hooks/user';
 function Header({ opened = false, setOpened = null }) {
 	const { user } = useAuth();
 	const [logout] = useLogoutMutation();
+	const imageUrl = import.meta.env.VITE_API_IMAGE_URL;
 
 	const logoutUser = async () => {
 		await logout();
@@ -27,9 +28,15 @@ function Header({ opened = false, setOpened = null }) {
 					<Group>
 						<Menu shadow='md'>
 							<Menu.Target>
-								<ActionIcon size='xl'>
-									<Avatar radius='xl' />
-								</ActionIcon>
+								{user.avatar ? (
+									<ActionIcon size='xl'>
+										<Avatar radius='xl' src={imageUrl + user.avatar} alt={user.name} />
+									</ActionIcon>
+								) : (
+									<ActionIcon size='xl'>
+										<Avatar radius='xl' />
+									</ActionIcon>
+								)}
 							</Menu.Target>
 							<Menu.Dropdown>
 								<Link to={`/users/${user.id}`}>

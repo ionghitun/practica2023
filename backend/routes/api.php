@@ -31,11 +31,14 @@ Route::post('/change-password', [AuthController::class, 'changePassword']);
 
 Route::get('categories', [CategoryController::class, 'tree']);
 Route::get('products', [ProductController::class, 'searchProducts']);
+Route::get('/products/{id}', [ProductController::class, 'getProduct']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'getUser']);
     Route::post('/user', [UserController::class, 'updateUser']);
     Route::post('/logout', [UserController::class, 'logout']);
+    Route::post('/user/{id}/avatar', [UserController::class, 'uploadAvatar']);
+    Route::delete('/user/{id}/delete-account', [UserController::class, 'deleteUser']);
 
     Route::group(['prefix' => 'category'], function () {
         Route::get('/list', [CategoryController::class, 'list']);

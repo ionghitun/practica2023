@@ -54,9 +54,9 @@ export const userEndpoints = api.injectEndpoints({
 			}),
 		}),
 		uploadAvatar: builder.mutation({
-			query: ({ data }) => {
+			query: ({ data, id }) => {
 				return {
-					url: `/user/upload-avatar`,
+					url: `/user/${id}/avatar`,
 					method: 'POST',
 					data,
 				};
@@ -79,7 +79,7 @@ export const userEndpoints = api.injectEndpoints({
 		deleteAccount: builder.mutation({
 			query: (id) => ({
 				url: `/user/${id}/delete-account`,
-				method: 'POST',
+				method: 'DELETE',
 			}),
 		}),
 		getRoles: builder.query({
